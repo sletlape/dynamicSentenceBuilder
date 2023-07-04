@@ -35,7 +35,4 @@ Once backend is running okay run the following commands.
   npm test
 ```
 ## Badges
-
-Add badges from somewhere like: [shields.io](https://shields.io/)
-
 [![ISC License](https://img.shields.io/badge/License-ISC-green.svg)](https://choosealicense.com/licenses/isc/)
