@@ -1,0 +1,20 @@
+{
+  "name": "dynamic-sentence-builder-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "nodemon app/app.js"
+  },
+  "keywords": [],
+  "author": "Khumo Letlape",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
+    "pg": "^8.11.1"
+  }
+}
