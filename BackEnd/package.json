@@ -7,14 +7,18 @@
     "test": "test"
   },
   "scripts": {
+    "test": "mocha --recursive --exit",
     "dev": "nodemon app/app.js"
   },
   "keywords": [],
   "author": "Khumo Letlape",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.3.7",
     "express": "^4.18.2",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
-    "pg": "^8.11.1"
+    "pg": "^8.11.1",
+    "uuid": "^9.0.0"
   }
 }
