@@ -18,7 +18,7 @@ Once backend is running okay run the following commands.
 
 ###Go come to the frontend directory (if not already there)
 ``` bash
-  cd frontend
+  cd FrontEnd
 ```
 ### Step 1: Install dependencies:
 ``` bash
