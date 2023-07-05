@@ -12,4 +12,11 @@ class InvalidFieldName extends Error {
     }
 }
 
-module.exports = { InvalidArgumentError, InvalidFieldName}
+class InvalidIdFieldType extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'InvalidIdFieldType';
+    }
+}
+
+module.exports = { InvalidArgumentError, InvalidFieldName, InvalidIdFieldType }

@@ -1,6 +1,6 @@
 const client = require('../db');
-const { InvalidArgumentError, InvalidFieldName } = require('../error');
-
+const { InvalidArgumentError, InvalidFieldName, InvalidIdFieldType } = require('../error');
+const { validate: validateUuidv4 } = require('uuid');
 const wordTypeAttributesArray = ['id', 'name', 'description'];
 const selectWordTypeAttributes = wordTypeAttributesArray.join(',');
 
@@ -15,16 +15,15 @@ function validateDimension(dimension, dimensionValue) {
 }
 
 async function addWordType({ id, name, description }) {
-    console.log("^^^",id)
-    if (typeof id !== 'string' || id.length === 0)
-        throw new Error('Error generating Id!');
+    if (!validateUuidv4(id))
+        throw new InvalidIdFieldType('Error generating Id!');
     validateDimension('name', name);
     validateDimension('description', description);
 
     let response;
     try {
         response = await client.query(`
-            insert into wordType (${selectWordTypeAttributes})
+            insert into wordTypes (${selectWordTypeAttributes})
             values ($1,$2,$3)
         `, [id, name, description]);
     } catch (e) {
@@ -38,7 +37,7 @@ async function addWordType({ id, name, description }) {
 async function getWordTypes() {
     const query = `
         select ${selectWordTypeAttributes}
-        from wordType
+        from wordTypes
     `;
     let results;
     try {
@@ -52,11 +51,14 @@ async function getWordTypes() {
 }
 
 async function getWordType({ wordTypeId }) {
+    console.log(wordTypeId)
+    // if (!validateUuidv4(wordTypeId))
+    //     throw new InvalidIdFieldType('Input ID should be UUIDv4');
     if (typeof wordTypeId !== 'string')
         return undefined
     const query = `
         select ${selectWordTypeAttributes}
-        from wordType
+        from wordTypes
         where id = $1
     `;
 
@@ -73,21 +75,24 @@ async function getWordType({ wordTypeId }) {
     return (results.rowCount === 0) ? null : results.rows[0];
 }
 
-async function deleteWordTypeById({ WordTypeid }) {
-    console.log('}}}}}',typeof wordTypeId)
-    if (typeof WordTypeid !== 'string')
-        return undefined;
+async function deleteWordTypeById(wordTypeId) {
+    console.log('>>>>>', wordTypeId)
+    // if (!validateUuidv4(wordTypeId))
+    //     throw new InvalidIdFieldType('ID should be of type UUIDv4');
+    if (typeof wordTypeId !== 'string')
+        return undefined
     let response;
     try {
         response = await client.query(`
-            delete from wordType
+            delete from wordTypes
             where id = $1
-        `, [WordTypeid]);
+        `, [wordTypeId]);
 
     } catch (e) {
         console.error(e);
         return undefined;
     }
+    console.log('}}}}}', response)
     return response;
 }
 
@@ -98,7 +103,7 @@ async function deleteWordTypeByWordTypeName({ WordTypeName }) {
     let response;
     try {
         response = await client.query(`
-            delete from wordType
+            delete from wordTypes
             where name = $1
         `, [WordTypeName]);
 
@@ -115,5 +120,6 @@ module.exports = {
     addWordType,
     getWordType,
     getWordTypes,
-    deleteWordType: deleteWordTypeById
+    deleteWordTypeById,
+    deleteWordTypeByWordTypeName
 };
