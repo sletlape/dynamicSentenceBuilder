@@ -1,16 +1,10 @@
+drop table if exists words;
 
--- Table for words
 CREATE TABLE words (
   id UUID PRIMARY KEY,
   wordTypeId UUID,
-  word VARCHAR(255),
+  word VARCHAR(255) NOT NULL UNIQUE,
   definition TEXT
   FOREIGN KEY (wordTypeId) REFERENCES wordTypes(id)
 );
 
--- Table for sentences
-CREATE TABLE sentences (
-  id UUID PRIMARY KEY,
-  content VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
