@@ -8,7 +8,7 @@ const dbClient = new Client({
 
 dbClient.connect();
 dbClient.query('select now()').then(
-    res => console.log('Connect to the db' + res.rows[0].now)
+    res => console.log('Connected to the db \n' + res.rows[0].now)
 );
 
 module.exports = dbClient;

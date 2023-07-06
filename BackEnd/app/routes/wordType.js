@@ -57,8 +57,9 @@ router.post('/', async (req, res) => {
         res.json({ id, message: 'WordType has been created' });
 });
 
-router.patch('/:wordTypeId', async (req, res) => {
-});
+//ToD0: implement patch to update existing word types
+// router.patch('/:wordTypeId', async (req, res) => {
+// });
 
 router.delete('/:wordTypeId', async (req, res) => {
     const wordTypeId = req.params.wordTypeId;

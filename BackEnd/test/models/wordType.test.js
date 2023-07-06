@@ -28,7 +28,6 @@ describe('Testing wordType model', () => {
 
     let testingWordTypeInputs = {};
     beforeEach(async () => {
-        console.log("Universal Before")
         testingWordTypeInputs = {
             id: uuidv4(),
             name: 'Noun',
@@ -38,19 +37,26 @@ describe('Testing wordType model', () => {
     });
 
     afterEach(async () => {
-        if(validateUuidv4(testingWordTypeInputs.id))
+        if (validateUuidv4(testingWordTypeInputs.id))
             await removeById(testingWordTypeInputs.id);
     });
 
     describe('Testing add wordType', () => {
+
+        async function fetchWordTypeById(id) {
+            const resp = await dbClient.query(`
+                SELECT id, name, description
+                FROM wordTypes
+                WHERE id = $1
+            `, [id]);
+
+            return resp;
+        }
+
         describe('Positive tests:', () => {
             it('adds record with valid recod {all fields provided}', async () => {
                 await addWordType(testingWordTypeInputs);
-                const resp = await dbClient.query(`
-                select id, name, description
-                from wordTypes
-                where id = $1
-            `, [testingWordTypeInputs.id]);
+                const resp = await fetchWordTypeById(testingWordTypeInputs.id);
                 expect(resp.rows.length).to.equal(1);
                 const wordType = resp.rows[0];
 
@@ -58,16 +64,8 @@ describe('Testing wordType model', () => {
             });
 
             it('adds record with only name field validyl provided {no description}', async () => {
-                const resp = await dbClient.query(`
-                select id, name, description
-                from wordTypes
-                where id = $1
-            `, [testingWordTypeInputs.id]);
-                testingWordTypeInputs.description = null;
-
-                console.log('-------No description------')
-                console.log(resp)
-                console.log('-------No description------')
+                await addWordType(testingWordTypeInputs);
+                const resp = await fetchWordTypeById(testingWordTypeInputs.id);
                 expect(resp.rows.length).to.equal(1);
                 const wordType = resp.rows[0];
                 expect(wordType).to.deep.equal(testingWordTypeInputs);
@@ -107,7 +105,7 @@ describe('Testing wordType model', () => {
                     err = e.message;
                     expect(e instanceof InvalidArgumentError);
                 }
-                expect(err).to.equal('Dimension, name, should be a non-empty stirng')
+                expect(err).to.equal('Dimension, name, should be a non-empty string')
             });
 
             it('Correct error message for invalid input: Name', async () => {
@@ -119,7 +117,7 @@ describe('Testing wordType model', () => {
                     err = e.message;
                     expect(e instanceof InvalidArgumentError);
                 }
-                expect(err).to.equal('Dimension, name, should be a non-empty stirng')
+                expect(err).to.equal('Dimension, name, should be a non-empty string')
             });
 
             it('Correct error message for no input: Description', async () => {
@@ -131,7 +129,7 @@ describe('Testing wordType model', () => {
                     err = e.message;
                     expect(e instanceof InvalidArgumentError);
                 }
-                expect(err).to.equal('Dimension, description, should be a non-empty stirng')
+                expect(err).to.equal('Dimension, description, should be a non-empty string')
             });
         });
     });
@@ -142,7 +140,6 @@ describe('Testing wordType model', () => {
                 await addWordType(testingWordTypeInputs);
 
                 const wordType = await getWordType({ wordTypeId: testingWordTypeInputs.id });
-                console.log("+++", wordType)
                 expect(wordType).to.deep.equal(testingWordTypeInputs);
             });
         });
@@ -157,13 +154,11 @@ describe('Testing wordType model', () => {
 
     describe('Testing delete wordTypeById', () => {
         beforeEach(async () => {
-            console.log('))))In Delete befor')
             await addWordType(testingWordTypeInputs);
         });
 
         describe('Positive tests:', () => {
             it('should delete wordType by Id', async () => {
-                console.log("<><><><><><><><><><><><><>)))", testingWordTypeInputs.id)
                 let resp = await deleteWordTypeById(testingWordTypeInputs.id)
                 expect(resp).to.have.property('rowCount', 1);
 
@@ -196,7 +191,6 @@ describe('Testing wordType model', () => {
 
     describe('Testing delete wordTypeByName', () => {
         beforeEach(async () => {
-            console.log('))))In Delete befor')
             await addWordType(testingWordTypeInputs);
         });
 

@@ -6,19 +6,19 @@ const selectWordTypeAttributes = wordTypeAttributesArray.join(',');
 
 
 function validateDimension(dimension, dimensionValue) {
-    if (dimension !== 'name' && dimension !== 'description')
+    const allowedDimensions = ['name', 'description'];
+    if (!allowedDimensions.includes(dimension))
         throw new InvalidFieldName('Unknown parameter: ', dimension);
 
-    if (typeof dimensionValue !== 'string' || dimensionValue.length === 0)
-        throw new InvalidArgumentError(`Dimension, ${dimension}, should be a non-empty stirng`);
+    if (typeof dimensionValue !== 'string' || dimensionValue.trimEnd().length === 0)
+        throw new InvalidArgumentError(`Dimension, ${dimension}, should be a non-empty string`);
 }
 
 async function addWordType({ id, name, description }) {
-    console.log("====================",description);
     if (!validateUuidv4(id))
         throw new InvalidIdFieldType('Error generating Id!');
     validateDimension('name', name);
-    if(description)
+    if (description)
         validateDimension('description', description);
 
     let response;
@@ -89,7 +89,7 @@ async function deleteWordTypeById(wordTypeId) {
         console.error(e);
         return undefined;
     }
-    
+
     return response;
 }
 

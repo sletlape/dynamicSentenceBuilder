@@ -8,7 +8,6 @@ before(async () => {
     const strSQL = wordTypes + wordTypesTestData;
     const arrSQL = strSQL.split(';');
     arrSQL.forEach(async sql => {
-        console.log('----', sql);
         await dbClient.query(sql);
     });
 
