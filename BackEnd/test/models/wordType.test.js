@@ -44,7 +44,7 @@ describe('Testing wordType model', () => {
 
     describe('Testing add wordType', () => {
         describe('Positive tests:', () => {
-            it('Testing adding valid values', async () => {
+            it('adds record with valid recod {all fields provided}', async () => {
                 await addWordType(testingWordTypeInputs);
                 const resp = await dbClient.query(`
                 select id, name, description
@@ -54,6 +54,22 @@ describe('Testing wordType model', () => {
                 expect(resp.rows.length).to.equal(1);
                 const wordType = resp.rows[0];
 
+                expect(wordType).to.deep.equal(testingWordTypeInputs);
+            });
+
+            it('adds record with only name field validyl provided {no description}', async () => {
+                const resp = await dbClient.query(`
+                select id, name, description
+                from wordTypes
+                where id = $1
+            `, [testingWordTypeInputs.id]);
+                testingWordTypeInputs.description = null;
+
+                console.log('-------No description------')
+                console.log(resp)
+                console.log('-------No description------')
+                expect(resp.rows.length).to.equal(1);
+                const wordType = resp.rows[0];
                 expect(wordType).to.deep.equal(testingWordTypeInputs);
             });
         });
@@ -104,18 +120,6 @@ describe('Testing wordType model', () => {
                     expect(e instanceof InvalidArgumentError);
                 }
                 expect(err).to.equal('Dimension, name, should be a non-empty stirng')
-            });
-
-            it('Correct error message for no input: Description', async () => {
-                delete testingWordTypeInputs.description
-                let err = '';
-                try {
-                    await addWordType(testingWordTypeInputs);
-                } catch (e) {
-                    err = e.message;
-                    expect(e instanceof InvalidArgumentError);
-                }
-                expect(err).to.equal('Dimension, description, should be a non-empty stirng')
             });
 
             it('Correct error message for no input: Description', async () => {

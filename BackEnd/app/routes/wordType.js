@@ -38,14 +38,11 @@ router.get('/:wordTypeId', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    console.log('_+__+_+_+_+_+_+_+_+_', req.body)
     const {
         name,
         description
     } = req.body;
 
-    // console.log('>?>?>?>?>?>?>?>?>?>', req)
-    // console.log('!@!@!@!@!@!@!@!@!@>', res)
     let resp;
     const id = uuidV4();
     try {

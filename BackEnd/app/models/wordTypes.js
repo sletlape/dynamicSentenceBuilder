@@ -6,7 +6,6 @@ const selectWordTypeAttributes = wordTypeAttributesArray.join(',');
 
 
 function validateDimension(dimension, dimensionValue) {
-    console.log('``````````````', dimensionValue)
     if (dimension !== 'name' && dimension !== 'description')
         throw new InvalidFieldName('Unknown parameter: ', dimension);
 
@@ -15,10 +14,12 @@ function validateDimension(dimension, dimensionValue) {
 }
 
 async function addWordType({ id, name, description }) {
+    console.log("====================",description);
     if (!validateUuidv4(id))
         throw new InvalidIdFieldType('Error generating Id!');
     validateDimension('name', name);
-    validateDimension('description', description);
+    if(description)
+        validateDimension('description', description);
 
     let response;
     try {
@@ -51,7 +52,6 @@ async function getWordTypes() {
 }
 
 async function getWordType({ wordTypeId }) {
-    console.log(wordTypeId)
     // if (!validateUuidv4(wordTypeId))
     //     throw new InvalidIdFieldType('Input ID should be UUIDv4');
     if (typeof wordTypeId !== 'string')
@@ -70,13 +70,10 @@ async function getWordType({ wordTypeId }) {
         return undefined;
     }
 
-    console.log("((((((", results)
-
     return (results.rowCount === 0) ? null : results.rows[0];
 }
 
 async function deleteWordTypeById(wordTypeId) {
-    console.log('>>>>>', wordTypeId)
     // if (!validateUuidv4(wordTypeId))
     //     throw new InvalidIdFieldType('ID should be of type UUIDv4');
     if (typeof wordTypeId !== 'string')
@@ -92,12 +89,11 @@ async function deleteWordTypeById(wordTypeId) {
         console.error(e);
         return undefined;
     }
-    console.log('}}}}}', response)
+    
     return response;
 }
 
 async function deleteWordTypeByWordTypeName({ WordTypeName }) {
-    console.log('}}}}}', typeof wordTypeName)
     if (typeof WordTypeName !== 'string')
         return undefined;
     let response;
