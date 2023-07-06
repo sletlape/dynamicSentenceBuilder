@@ -17,7 +17,10 @@ router.get('/', async (req, res) => {
             return res.status(400).json({ message: e.message });
         return res.sendStatus(500);
     }
-    return wordTypes === undefined ? sendStatus(500) : res.json(wordTypes);
+
+    if (wordTypes === null)
+        return res.sendStatus(404);
+    return wordTypes === undefined ? res.sendStatus(500) : res.json(wordTypes);
 });
 
 router.get('/:wordTypeId', async (req, res) => {
@@ -35,14 +38,17 @@ router.get('/:wordTypeId', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+    console.log('_+__+_+_+_+_+_+_+_+_', req.body)
     const {
         name,
         description
     } = req.body;
 
+    // console.log('>?>?>?>?>?>?>?>?>?>', req)
+    // console.log('!@!@!@!@!@!@!@!@!@>', res)
     let resp;
+    const id = uuidV4();
     try {
-        const id = uuidV4();
         resp = await addWordType({ id, name, description });
     } catch (e) {
         console.error(e);
@@ -50,7 +56,8 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: e.message });
         return res.sendStatus(500);
     }
-    return wordTypes === undefined ? sendStatus(500) : res.json({id, message: 'WordType has been created'});
+    return resp === undefined ? res.sendStatus(500) :
+        res.json({ id, message: 'WordType has been created' });
 });
 
 router.patch('/:wordTypeId', async (req, res) => {
