@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const app = require('../app/app');
 
 describe('Testing creation of app', () => {
-    it('App is exported correctly', () => {
+    it('correctly exports the app', () => {
         expect(typeof app).to.equal('function');
     });
 });

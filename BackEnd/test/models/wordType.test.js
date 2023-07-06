@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { v4: uuidv4, validate: validateUuidv4 } = require('uuid');
-const client = require('../../app/db');
+const dbClient = require('../../app/db');
 const { InvalidArgumentError, InvalidIdFieldType } = require('../../app/error');
 const {
     getWordType,
@@ -12,7 +12,7 @@ const {
 // const { query } = require('express');
 
 async function removeById(id) {
-    await client.query(`
+    await dbClient.query(`
             delete from wordTypes
             where id = $1
         `, [id]);
@@ -21,7 +21,7 @@ async function removeById(id) {
 describe('Testing wordType model', () => {
 
     async function clearTable() {
-        await client.query(`
+        await dbClient.query(`
             DELETE FROM wordTypes
         `);
     }
@@ -46,7 +46,7 @@ describe('Testing wordType model', () => {
         describe('Positive tests:', () => {
             it('Testing adding valid values', async () => {
                 await addWordType(testingWordTypeInputs);
-                const resp = await client.query(`
+                const resp = await dbClient.query(`
                 select id, name, description
                 from wordTypes
                 where id = $1

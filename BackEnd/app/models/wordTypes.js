@@ -1,4 +1,4 @@
-const client = require('../db');
+const dbClient = require('../db');
 const { InvalidArgumentError, InvalidFieldName, InvalidIdFieldType } = require('../error');
 const { validate: validateUuidv4 } = require('uuid');
 const wordTypeAttributesArray = ['id', 'name', 'description'];
@@ -6,7 +6,7 @@ const selectWordTypeAttributes = wordTypeAttributesArray.join(',');
 
 
 function validateDimension(dimension, dimensionValue) {
-
+    console.log('``````````````', dimensionValue)
     if (dimension !== 'name' && dimension !== 'description')
         throw new InvalidFieldName('Unknown parameter: ', dimension);
 
@@ -22,7 +22,7 @@ async function addWordType({ id, name, description }) {
 
     let response;
     try {
-        response = await client.query(`
+        response = await dbClient.query(`
             insert into wordTypes (${selectWordTypeAttributes})
             values ($1,$2,$3)
         `, [id, name, description]);
@@ -41,7 +41,7 @@ async function getWordTypes() {
     `;
     let results;
     try {
-        results = await client.query(query);
+        results = await dbClient.query(query);
     } catch (e) {
         console.log(e);
         return undefined;
@@ -64,7 +64,7 @@ async function getWordType({ wordTypeId }) {
 
     let results
     try {
-        results = await client.query(query, [wordTypeId]);
+        results = await dbClient.query(query, [wordTypeId]);
     } catch (e) {
         console.log(e);
         return undefined;
@@ -83,7 +83,7 @@ async function deleteWordTypeById(wordTypeId) {
         return undefined
     let response;
     try {
-        response = await client.query(`
+        response = await dbClient.query(`
             delete from wordTypes
             where id = $1
         `, [wordTypeId]);
@@ -102,7 +102,7 @@ async function deleteWordTypeByWordTypeName({ WordTypeName }) {
         return undefined;
     let response;
     try {
-        response = await client.query(`
+        response = await dbClient.query(`
             delete from wordTypes
             where name = $1
         `, [WordTypeName]);

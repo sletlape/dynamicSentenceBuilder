@@ -1,7 +1,7 @@
 drop table if exists wordTypes;
 
-create table wordTypes(
+CREATE TABLE wordTypes (
   id UUID PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL UNIQUE,
   description TEXT
 );
