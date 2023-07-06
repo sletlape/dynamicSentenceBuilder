@@ -4,21 +4,21 @@ const { validate: validateUuidv4 } = require('uuid');
 const wordTypeAttributesArray = ['id', 'name', 'description'];
 const selectWordTypeAttributes = wordTypeAttributesArray.join(',');
 
-
 function validateDimension(dimension, dimensionValue) {
-    if (dimension !== 'name' && dimension !== 'description')
+    const allowedDimensions = ['name', 'description'];
+    if (!allowedDimensions.includes(dimension))
         throw new InvalidFieldName('Unknown parameter: ', dimension);
 
-    if (typeof dimensionValue !== 'string' || dimensionValue.length === 0)
-        throw new InvalidArgumentError(`Dimension, ${dimension}, should be a non-empty stirng`);
+    if (typeof dimensionValue !== 'string' || dimensionValue.trimEnd().length === 0)
+        throw new InvalidArgumentError(`Dimension, ${dimension}, should be a non-empty string`);
 }
 
+
 async function addWordType({ id, name, description }) {
-    console.log("====================",description);
     if (!validateUuidv4(id))
         throw new InvalidIdFieldType('Error generating Id!');
     validateDimension('name', name);
-    if(description)
+    if (description)
         validateDimension('description', description);
 
     let response;
@@ -78,22 +78,45 @@ async function deleteWordTypeById(wordTypeId) {
     //     throw new InvalidIdFieldType('ID should be of type UUIDv4');
     if (typeof wordTypeId !== 'string')
         return undefined
+    
     let response;
     try {
+        await dbClient.query('begin');
+        // Delete related words first
+        const tableExists = dbClient.query(`
+            select 1 from information_schema
+            where table_schema = 'public'
+            and table_name = words
+        `).rows[0].exists;
+
+        if (tableExists){
+            await dbClient.query(`
+                delete from words 
+                where wordTypeId = $1
+            `, [wordTypeId]);}
+        // Delete the wordType
         response = await dbClient.query(`
-            delete from wordTypes
+            delete from wordTypes 
             where id = $1
         `, [wordTypeId]);
-
+        await dbClient.query('commit');
     } catch (e) {
         console.error(e);
+        await dbClient.query('rollback');
         return undefined;
     }
-    
+
     return response;
 }
 
 async function deleteWordTypeByWordTypeName({ WordTypeName }) {
+    // Get the wordType ID based on the name
+    const query = '';
+    const result = await dbClient.query(`
+        select id from wordTypes 
+        where name = $1
+        `, [wordTypeName]);
+
     if (typeof WordTypeName !== 'string')
         return undefined;
     let response;
@@ -103,7 +126,9 @@ async function deleteWordTypeByWordTypeName({ WordTypeName }) {
             where name = $1
         `, [WordTypeName]);
 
+        await dbClient.query('commit');
     } catch (e) {
+        await dbClient.query('rollback');
         console.error(e);
         return undefined;
     }

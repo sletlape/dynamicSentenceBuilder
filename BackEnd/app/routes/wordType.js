@@ -1,7 +1,6 @@
-const { response } = require('express');
 const { v4: uuidV4 } = require('uuid');
 const { InvalidArgumentError, InvalidFieldName } = require('../error');
-const { getWordTypes, addWordType, deleteWordType } = require('../models/wordTypes');
+const { getWordTypes, getWordType, addWordType, deleteWordTypeById, updateWordType } = require('../models/wordTypes');
 
 const router = require('express').Router();
 
@@ -10,80 +9,71 @@ router.get('/', async (req, res) => {
 
     let wordTypes;
     try {
-        wordTypes = await getWordTypes();
+        const wordTypes = await getWordTypes();
+        if (wordTypes === undefined) {
+            return res.sendStatus(500);
+        }
+        return res.json(wordTypes);
     } catch (e) {
-        console.log(e);
-        if (e instanceof InvalidArgumentError)
+        console.error(e);
+        if (e instanceof InvalidArgumentError) {
             return res.status(400).json({ message: e.message });
+        }
         return res.sendStatus(500);
     }
-
-    if (wordTypes === null)
-        return res.sendStatus(404);
-    return wordTypes === undefined ? res.sendStatus(500) : res.json(wordTypes);
 });
 
 router.get('/:wordTypeId', async (req, res) => {
     const wordTypeId = req.params.wordTypeId;
 
-    let wordType;
     try {
-        wordType = await getWordType({ wordTypeId });
+        const wordType = await getWordType({ wordTypeId });
+        if (wordType === undefined) {
+            return res.sendStatus(404);
+        }
+        return res.json(wordType);
     } catch (e) {
+        console.error(e);
         return res.sendStatus(500);
     }
-    if (wordType === null)
-        return res.sendStatus(404);
-    return wordTypes === undefined ? sendStatus(500) : res.json(wordTypes);
 });
 
 router.post('/', async (req, res) => {
-    const {
-        name,
-        description
-    } = req.body;
-
-    let resp;
+    const { name, description } = req.body;
     const id = uuidV4();
+
     try {
-        resp = await addWordType({ id, name, description });
+        const response = await addWordType({ id, name, description });
+        if (response === undefined) {
+            return res.sendStatus(500);
+        }
+        return res.json({ id, message: 'WordType has been created' });
     } catch (e) {
         console.error(e);
-        if (e instanceof InvalidArgumentError || e instanceof InvalidFieldName)
+        if (e instanceof InvalidArgumentError || e instanceof InvalidFieldName) {
             return res.status(400).json({ message: e.message });
+        }
         return res.sendStatus(500);
     }
-    return resp === undefined ? res.sendStatus(500) :
-        res.json({ id, message: 'WordType has been created' });
 });
 
-router.patch('/:wordTypeId', async (req, res) => {
-});
+//ToD0: implement patch to update existing word types
+// router.patch('/:wordTypeId', async (req, res) => {
+// });
 
 router.delete('/:wordTypeId', async (req, res) => {
     const wordTypeId = req.params.wordTypeId;
-    let resp;
-    try {
-        resp = await deleteWordTypeById({ wordTypeId });
-    } catch (e) {
-        console.error(e);
-    }
-    if (resp.rowCount === 0)
-        return res.sendStatus(404);
-    return wordTypes === undefined ? sendStatus(500) : res.json({ id, message: 'WordType has been deleted' });
-});
 
-router.delete('/:wordTypeName', async (req, res) => {
-    const wordTypeName = req.params.wordTypeName;
-    let resp;
     try {
-        resp = await deleteWordTypeById({ wordTypeName });
+        const response = await deleteWordTypeById(wordTypeId);
+        if (response === undefined || response.rowCount === 0) {
+            return res.sendStatus(404);
+        }
+        return res.json({ id: wordTypeId, message: 'WordType has been deleted' });
     } catch (e) {
         console.error(e);
+        return res.sendStatus(500);
     }
-    if (resp.rowCount === 0)
-        return res.sendStatus(404);
-    return wordTypes === undefined ? sendStatus(500) : res.json({ id, message: 'WordType has been deleted' });
 });
 
 module.exports = router;

@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     volumes:
-      - ./ddl:/ddl
+      - ./ddl:/docker-entrypoint-initdb.d
   app:
     build:
       context: .
@@ -15,11 +15,10 @@ services:
     volumes:
       - ./app:/app
       - ./test:/test
-      - ./ddl:/ddl
     depends_on:
       - 'postgresdb'
     environment:
-      - NODE_ENV
+      - NODE_ENV=development
       - POSTGRES_PASSWORD
       - POSTGRES_USER
       - POSTGRES_PORT
