@@ -57,9 +57,21 @@ router.post('/', async (req, res) => {
     }
 });
 
-//ToD0: implement patch to update existing word types
-// router.patch('/:wordTypeId', async (req, res) => {
-// });
+router.patch('/:wordTypeId', async (req, res) => {
+    const wordTypeId = req.params.wordTypeId;
+    const { name, description } = req.body;
+
+    try {
+        const updatedWordType = await updateWordType(wordTypeId, { name, description });
+        if (updatedWordType === undefined) {
+            return res.sendStatus(404);
+        }
+        return res.json(updatedWordType);
+    } catch (e) {
+        console.error(e);
+        return res.sendStatus(500);
+    }
+});
 
 router.delete('/:wordTypeId', async (req, res) => {
     const wordTypeId = req.params.wordTypeId;
