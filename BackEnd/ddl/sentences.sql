@@ -1,4 +1,4 @@
--drop table if exists sentences;
+drop table if exists sentences;
 
 CREATE TABLE sentences (
   id UUID PRIMARY KEY,
