@@ -19,4 +19,8 @@ class InvalidIdFieldType extends Error {
     }
 }
 
-module.exports = { InvalidArgumentError, InvalidFieldName, InvalidIdFieldType }
+module.exports = {
+    InvalidArgumentError,
+    InvalidFieldName,
+    InvalidIdFieldType
+};

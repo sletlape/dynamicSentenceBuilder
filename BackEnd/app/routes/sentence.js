@@ -1,13 +1,12 @@
-const { v4: uuidV4 } = require('uuid');
-const { InvalidArgumentError, InvalidFieldName } = require('../error');
+const express = require('express');
+const router = express.Router();
 const {
+    addSentence,
     getSentences,
     getSentence,
-    addSentence,
-    deleteSentenceById
+    updateSentence,
+    deleteSentenceById,
 } = require('../models/sentences');
-
-const router = require('express').Router();
 
 router.get('/', async (req, res) => {
     try {
@@ -16,8 +15,8 @@ router.get('/', async (req, res) => {
             return res.sendStatus(500);
         }
         return res.json(sentences);
-    } catch (error) {
-        console.error(error);
+    } catch (e) {
+        console.error(e);
         return res.sendStatus(500);
     }
 });
@@ -26,13 +25,13 @@ router.get('/:sentenceId', async (req, res) => {
     const sentenceId = req.params.sentenceId;
 
     try {
-        const sentence = await getSentence({ sentenceId });
+        const sentence = await getSentence(sentenceId);
         if (sentence === undefined) {
             return res.sendStatus(404);
         }
         return res.json(sentence);
-    } catch (error) {
-        console.error(error);
+    } catch (e) {
+        console.error(e);
         return res.sendStatus(500);
     }
 });
@@ -51,7 +50,21 @@ router.post('/', async (req, res) => {
         console.error(error);
         if (error instanceof InvalidArgumentError || error instanceof InvalidFieldName) {
             return res.status(400).json({ message: error.message });
+    }
+});
+
+router.patch('/:sentenceId', async (req, res) => {
+    const sentenceId = req.params.sentenceId;
+    const { content } = req.body;
+
+    try {
+        const updatedSentence = await updateSentence(sentenceId, { content });
+        if (updatedSentence === undefined) {
+            return res.sendStatus(404);
         }
+        return res.json(updatedSentence);
+    } catch (e) {
+        console.error(e);
         return res.sendStatus(500);
     }
 });
@@ -65,8 +78,8 @@ router.delete('/:sentenceId', async (req, res) => {
             return res.sendStatus(404);
         }
         return res.json({ id: sentenceId, message: 'Sentence has been deleted' });
-    } catch (error) {
-        console.error(error);
+    } catch (e) {
+        console.error(e);
         return res.sendStatus(500);
     }
 });

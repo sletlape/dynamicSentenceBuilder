@@ -13,7 +13,8 @@ app.use(cors());
 app.use('/word', wordRouter);
 app.use('/sentence', sentenceRouter);
 app.use('/wordType', wordTypeRouter);
-app.listen(process.env.PORT || 4000);
-console.log('Listening on port: ', process.env.PORT);
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`Server is listening on port ${process.env.PORT || 4000}`);
+});
 
 module.exports = app;

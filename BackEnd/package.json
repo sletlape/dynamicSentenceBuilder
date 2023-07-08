@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "start": "node app/app.js",
     "test": "mocha --recursive --exit",
     "dev": "nodemon app/app.js"
   },

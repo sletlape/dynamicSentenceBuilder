@@ -1,6 +1,7 @@
 const dbClient = require('../db');
 const { InvalidArgumentError, InvalidFieldName, InvalidIdFieldType } = require('../error');
 const { validate: validateUuidv4 } = require('uuid');
+
 const wordAttributesArray = ['id', 'wordTypeId', 'name', 'description'];
 const selectWordAttributes = wordAttributesArray.join(',');
 
@@ -17,123 +18,103 @@ function validateDimension(dimension, dimensionValue) {
 
 async function addWord({ id, wordTypeId, name, description }) {
     if (!validateUuidv4(id)) {
-        throw new InvalidIdFieldType('Error generating ID!');
+        throw new InvalidIdFieldType('Error generating ID');
     }
-
     if (!validateUuidv4(wordTypeId)) {
-        throw new InvalidIdFieldType('Error generating WordTypeId!');
+        throw new InvalidIdFieldType('Invalid wordTypeId');
     }
-
     validateDimension('name', name);
     if (description) {
         validateDimension('description', description);
     }
 
+    let response;
     try {
-        const response = await dbClient.query(
-            `insert into words (${selectWordAttributes})
-                values ($1, $2, $3, $4)`,
-            [id, wordTypeId, name, description]
-        );
-        return response;
-    } catch (error) {
-        console.error(error);
+        response = await dbClient.query(`
+          INSERT INTO words (${selectWordAttributes})
+          VALUES ($1, $2, $3, $4)
+          RETURNING *
+        `, [id, wordTypeId, name, description]);
+    } catch (e) {
+        console.error(e);
         return undefined;
     }
+
+    return response.rows[0];
 }
 
 async function getWords() {
+    let results;
     try {
-        const query = `
-            select ${selectWordAttributes}
-            from words
-    `;
-        const results = await dbClient.query(query);
-        return results.rows;
-    } catch (error) {
-        console.error(error);
-        return undefined;
-    }
-}
-
-async function getWord({ wordId }) {
-    if (typeof wordId !== 'string') {
+        results = await dbClient.query(`
+          SELECT ${selectWordAttributes}
+          FROM words
+        `);
+    } catch (e) {
+        console.error(e);
         return undefined;
     }
 
+    return results.rows;
+}
+
+async function getWord(wordId) {
+    let result;
     try {
-        const query = `
-            select ${selectWordAttributes}
-            from words
-            where id = $1
-        `;
-        const results = await dbClient.query(query, [wordId]);
-        return results.rows[0] || null;
-    } catch (error) {
-        console.error(error);
+        result = await dbClient.query(`
+          SELECT ${selectWordAttributes}
+          FROM words
+          WHERE id = $1
+        `, [wordId]);
+    } catch (e) {
+        console.error(e);
         return undefined;
     }
+
+    return result.rows[0];
 }
+
+async function updateWord(wordId, { name, description }) {
+    validateDimension('name', name);
+    validateDimension('description', description);
+
+    let response;
+    try {
+        response = await dbClient.query(`
+      UPDATE words
+      SET name = $1, description = $2
+      WHERE id = $3
+      RETURNING *
+    `, [name, description, wordId]);
+    } catch (e) {
+        console.error(e);
+        return undefined;
+    }
+
+    return response.rows[0];
+}
+
 
 async function deleteWordById(wordId) {
-    if (typeof wordId !== 'string') {
-        return undefined;
-    }
+  let response;
+  try {
+    response = await dbClient.query(`
+      DELETE FROM words
+      WHERE id = $1
+      RETURNING *
+    `, [wordId]);
+  } catch (e) {
+    console.error(e);
+    return undefined;
+  }
 
-    try {
-        await dbClient.query('begin');
-
-        const response = await dbClient.query(
-            `
-                delete from words
-                where id = $1
-            `,
-            [wordId]
-        );
-
-        await dbClient.query('commit');
-        return response;
-    } catch (error) {
-        await dbClient.query('rollback');
-        console.error(error);
-        return undefined;
-    }
-}
-
-async function updateWord({ id, wordTypeId, name, description }) {
-    if (!validateUuidv4(id)) {
-        throw new InvalidIdFieldType('Error generating ID!');
-    }
-
-    if (!validateUuidv4(wordTypeId)) {
-        throw new InvalidIdFieldType('Error generating WordTypeId!');
-    }
-
-    validateDimension('name', name);
-    if (description) {
-        validateDimension('description', description);
-    }
-
-    try {
-        const response = await dbClient.query(`
-            update words
-            set wordTypeId = $2, name = $3, description = $4
-            where id = $1
-            returning *
-        `,
-            [id, wordTypeId, name, description]
-        );
-        return response.rows[0] || null;
-    } catch (error) {
-        console.error(error);
-        return undefined;
-    }
+  return response.rows[0];
 }
 
 module.exports = {
-    addWord,
-    getWords,
-    getWord,
-    deleteWordById,
-    updateWord,
+  addWord,
+  getWords,
+  getWord,
+  updateWord,
+  deleteWordById,
 };

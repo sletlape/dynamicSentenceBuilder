@@ -8,9 +8,8 @@ const dbClient = new Client({
     database: process.env.POSTGRES_DB
 })
 
-dbClient.connect();
-dbClient.query('select now()').then(
-    res => console.log('Connected to the db \n' + res.rows[0].now)
-);
+dbClient.connect()
+    .then(() => console.log('Connected to the database'))
+    .catch((err) => console.error('Error connecting to the database:', err));
 
 module.exports = dbClient;
