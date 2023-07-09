@@ -1,6 +1,11 @@
-from node:16-alpine
+FROM node:16-alpine
 
-COPY package-lock.json package.json ./
+COPY package*.json ./
+
 RUN npm install
 
-CMD [ "npm", "run", "dev" ]
+COPY . .
+
+EXPOSE 4000
+
+CMD [ "npm", "start" ]
