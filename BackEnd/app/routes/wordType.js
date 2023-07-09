@@ -1,7 +1,7 @@
-const { v4: uuidV4 } = require('uuid');
+const express = require('express');
+const router = express.Router();
+const { v4: uuidv4, v4 } = require('uuid');
 const { InvalidArgumentError, InvalidFieldName } = require('../error');
-const { getWordTypes, getWordType, addWordType, deleteWordTypeById, updateWordType } = require('../models/wordTypes');
-
 
 const {
     addWordType,

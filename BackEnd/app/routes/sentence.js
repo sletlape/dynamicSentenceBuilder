@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
         return res.json({ id, message: 'Sentence has been created' });
     } catch (error) {
         console.error(error);
-        if (error instanceof InvalidArgumentError || error instanceof InvalidFieldName) {
+        if (error instanceof InvalidArgumentError || error instanceof InvalidFieldName) 
             return res.status(400).json({ message: error.message });
     }
 });

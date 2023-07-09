@@ -9,34 +9,35 @@ const { getWordType, getAllWordTypes } = require('../../app/models/wordTypes');
 chai.use(chaiHTTP);
 
 describe('Testing wordType endpoints', () => {
-    
+    //#region Dummy data for post tests
+    const wtNameAndDesc = {
+        name: 'magnet',
+        description: 'letter troops explain huge into coast although price require cover correct allow degree art useful loud affect after increase source writing pencil call satisfied'
+    };
+    const wtNameOnly = {
+        name: 'principal',
+    };
+    const wtInvalidName = {
+        name: 123,
+        description: 'party camera poetry driven generally newspaper else feel suddenly been more cell mission football drew fellow split congress feature milk become dozen band consider'
+    };
+    const wtInvalidDescription = {
+        name: 'beginning',
+        description: 123
+    };
+    //#endregion
+
     async function cleanup() {
         await dbClient.query(
-            `DELETE FROM wordTypes WHERE name IN ($1, $2, $3)`,
+            `DELETE FROM wordTypes WHERE name IN ($1, $2)`,
             [wtNameAndDesc.name, wtNameOnly.name, wtInvalidName.name]
         );
     }
 
     describe('Testing POST on wordType endpoint', () => {
-        //#region Dummy data for post tests
-        const wtNameAndDesc = {
-            name: 'magnet',
-            description: 'letter troops explain huge into coast although price require cover correct allow degree art useful loud affect after increase source writing pencil call satisfied'
-        };
-        const wtNameOnly = {
-            name: 'principal',
-        };
-        const wtInvalidName = {
-            name: 123,
-            description: 'party camera poetry driven generally newspaper else feel suddenly been more cell mission football drew fellow split congress feature milk become dozen band consider'
-        };
-        const wtInvalidDescription = {
-            name: 'beginning',
-            description: 123
-        };
-        //#endregion
-        
-        before (async () => {
+
+
+        before(async () => {
             await cleanup();
         });
 
@@ -54,7 +55,7 @@ describe('Testing wordType endpoints', () => {
                         });
                 });
 
-                it('should give back created wordType as in dummy data wtNameAndDesc. {get by id}', async () => { 
+                it('should give back created wordType as in dummy data wtNameAndDesc. {get by id}', async () => {
                     const wordType = await getWordType({ wordTypeId: wtNameAndDesc.id });
                     expect(wtNameAndDesc).to.deep.equal(wordType);
                 });
@@ -81,7 +82,7 @@ describe('Testing wordType endpoints', () => {
             });
         });
 
-        describe('Negative Tests', () => { 
+        describe('Negative Tests', () => {
             let rowsBefore;
             before(async () => {
                 await cleanup();
@@ -114,11 +115,11 @@ describe('Testing wordType endpoints', () => {
                         })
                 });
             });
-            
+
         });
     });
 
-    describe('Testing Get on the wordType endpoint', () => { 
+    describe('Testing Get on the wordType endpoint', () => {
 
     });
 });
