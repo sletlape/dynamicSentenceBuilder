@@ -19,8 +19,8 @@ services:
     depends_on:
       - 'postgresdb'
     environment:
-      - NODE_ENV=development
+      - NODE_ENV
       - POSTGRES_PASSWORD
       - POSTGRES_USER
-      - POSTGRES_PORT=5432
-      - POSTGRES_HOST=postgresdb
+      - POSTGRES_PORT
+      - POSTGRES_HOST
