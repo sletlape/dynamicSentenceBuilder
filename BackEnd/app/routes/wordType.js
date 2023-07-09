@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4, v4 } = require('uuid');
+const { v4 } = require('uuid');
 const { InvalidArgumentError, InvalidFieldName } = require('../error');
 
 const {
@@ -41,7 +41,7 @@ router.get('/:wordTypeId', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { name, description } = req.body;
-    const id = uuidV4();
+    const id = v4();
 
     try {
         const response = await addWordType({ id, name, description });
