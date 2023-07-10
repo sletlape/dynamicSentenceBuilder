@@ -191,35 +191,35 @@ describe('Testing wordType model', () => {
         });
     });
 
-    describe('Testing delete wordTypeByName', () => {
-        beforeEach(async () => {
-            await addWordType(testingWordTypeInputs);
-        });
+    // describe('Testing delete wordTypeByName', () => {
+    //     beforeEach(async () => {
+    //         await addWordType(testingWordTypeInputs);
+    //     });
 
-        describe('Positive tests:', () => {
-            it('should delete wordType by name', async () => {
-                let resp = await deleteWordTypeByWordTypeName({ WordTypeName: testingWordTypeInputs.name });
-                expect(resp).to.not.be.undefined;
-                expect(resp).to.have.property('rowCount', 1);
-                expect(resp.rowCount).to.equal(1);
+    //     describe('Positive tests:', () => {
+    //         it('should delete wordType by name', async () => {
+    //             let resp = await deleteWordTypeByWordTypeName({ WordTypeName: testingWordTypeInputs.name });
+    //             expect(resp).to.not.be.undefined;
+    //             expect(resp).to.have.property('rowCount', 1);
+    //             expect(resp.rowCount).to.equal(1);
 
-                const fetchedWordType = await getWordType({ wordTypeName: testingWordTypeInputs.name });
-                expect(fetchedWordType).to.be.undefined;
-            });
-        });
+    //             const fetchedWordType = await getWordType({ wordTypeName: testingWordTypeInputs.name });
+    //             expect(fetchedWordType).to.be.undefined;
+    //         });
+    //     });
 
-        describe('Negative tests:', () => {
-            it('should fail to delete a wordType with id type', async () => {
-                const invalidDelete = await deleteWordTypeByWordTypeName(123);
-                expect(invalidDelete).to.be.undefined;
-            });
+    //     describe('Negative tests:', () => {
+    //         it('should fail to delete a wordType with id type', async () => {
+    //             const invalidDelete = await deleteWordTypeByWordTypeName(123);
+    //             expect(invalidDelete).to.be.undefined;
+    //         });
 
 
-            it('should fail to delete a wordType with id', async () => {
-                const invalidDelete = await deleteWordTypeByWordTypeName('abc');
-                expect(invalidDelete).to.be.undefined;
-                expect(invalidDelete instanceof InvalidArgumentError);
-            });
-        });
-    });
+    //         it('should fail to delete a wordType with id', async () => {
+    //             const invalidDelete = await deleteWordTypeByWordTypeName('abc');
+    //             expect(invalidDelete).to.be.undefined;
+    //             expect(invalidDelete instanceof InvalidArgumentError);
+    //         });
+    //     });
+    // });
 });

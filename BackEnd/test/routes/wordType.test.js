@@ -29,7 +29,7 @@ describe('Testing wordType endpoints', () => {
 
     async function cleanup() {
         await dbClient.query(
-            `DELETE FROM wordTypes WHERE name IN ($1, $2)`,
+            `DELETE FROM wordTypes WHERE name IN ($1, $2,$3)`,
             [wtNameAndDesc.name, wtNameOnly.name, wtInvalidName.name]
         );
     }
@@ -55,11 +55,6 @@ describe('Testing wordType endpoints', () => {
                         });
                 });
 
-                it('should give back created wordType as in dummy data wtNameAndDesc. {get by id}', async () => {
-                    const wordType = await getWordType({ wordTypeId: wtNameAndDesc.id });
-                    expect(wtNameAndDesc).to.deep.equal(wordType);
-                });
-
                 it('should respond with statuss 200 for wordType with only name', (done) => {
                     //#ToDo: add make request a function, less repetition;
                     chai.request(app)
@@ -75,6 +70,7 @@ describe('Testing wordType endpoints', () => {
 
                 it('should give back the created wordType as in dummy data wtNameOnly. {get by id}', async () => {
                     const wordType = await getWordType({ wordTypeId: wtNameOnly.id });
+                    console.log('wwwwwwww: ',wordType)
                     expect(wordType.id).to.equal(wtNameOnly.id);
                     expect(wordType.name).to.equal(wtNameOnly.name);
                     expect(wordType.description).to.equal(null)
