@@ -1,0 +1,222 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Dynamic Sentence Builder API
+paths:
+  /wordType:
+    get:
+      summary: Get all word types
+      description: Retrieves a list of all available word types.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/WordType"
+    post:
+      summary: Create a new word type
+      description: Creates a new word type with the provided details.
+      parameters:
+        - name: body
+          in: body
+          description: Word type details
+          schema:
+            $ref: "#/definitions/WordTypeInput"
+      responses:
+        201:
+          description: Word type created successfully
+          schema:
+            $ref: "#/definitions/WordType"
+        400:
+          description: Bad request
+
+  /wordType/{wordTypeId}:
+    get:
+      summary: Get a word type by ID
+      description: Retrieves a word type by its ID.
+      parameters:
+        - name: wordTypeId
+          in: path
+          description: ID of the word type
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/WordType"
+        404:
+          description: Word type not found
+    delete:
+      summary: Delete a word type by ID
+      description: Deletes a word type by its ID.
+      parameters:
+        - name: wordTypeId
+          in: path
+          description: ID of the word type
+          required: true
+          type: string
+      responses:
+        204:
+          description: Word type deleted successfully
+        404:
+          description: Word type not found
+
+  /word:
+    get:
+      summary: Get all words
+      description: Retrieves a list of all available words.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Word"
+    post:
+      summary: Create a new word
+      description: Creates a new word with the provided details.
+      parameters:
+        - name: body
+          in: body
+          description: Word details
+          schema:
+            $ref: "#/definitions/WordInput"
+      responses:
+        201:
+          description: Word created successfully
+          schema:
+            $ref: "#/definitions/Word"
+        400:
+          description: Bad request
+
+  /word/{wordId}:
+    get:
+      summary: Get a word by ID
+      description: Retrieves a word by its ID.
+      parameters:
+        - name: wordId
+          in: path
+          description: ID of the word
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Word"
+        404:
+          description: Word not found
+    delete:
+      summary: Delete a word by ID
+      description: Deletes a word by its ID.
+      parameters:
+        - name: wordId
+          in: path
+          description: ID of the word
+          required: true
+          type: string
+      responses:
+        204:
+          description: Word deleted successfully
+        404:
+          description: Word not found
+
+  /sentence:
+    get:
+      summary: Get all sentences
+      description: Retrieves a list of all available sentences.
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Sentence"
+    post:
+      summary: Create a new sentence
+      description: Creates a new sentence with the provided content.
+      parameters:
+        - name: body
+          in: body
+          description: Sentence details
+          schema:
+            $ref: "#/definitions/SentenceInput"
+      responses:
+        201:
+          description: Sentence created successfully
+          schema:
+            $ref: "#/definitions/Sentence"
+        400:
+          description: Bad request
+
+definitions:
+  WordType:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID of the word type
+      name:
+        type: string
+        description: Name of the word type
+      description:
+        type: string
+        description: Description of the word type
+
+  WordTypeInput:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Name of the word type
+      description:
+        type: string
+        description: Description of the word type
+
+  Word:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID of the word
+      wordTypeId:
+        type: string
+        description: ID of the word type
+      name:
+        type: string
+        description: Name of the word
+      description:
+        type: string
+        description: Description of the word
+
+  WordInput:
+    type: object
+    properties:
+      wordTypeId:
+        type: string
+        description: ID of the word type
+      name:
+        type: string
+        description: Name of the word
+      description:
+        type: string
+        description: Description of the word
+
+  Sentence:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID of the sentence
+      content:
+        type: string
+        description: Content of the sentence
+
+  SentenceInput:
+    type: object
+    properties:
+      content:
+        type: string
+        description: Content of the sentence
